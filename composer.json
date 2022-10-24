@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.2|>=8.0",
         "ext-pdo": "*",
         "ext-pdo_firebird": "*",
         "doctrine/dbal": "^2.9.3",

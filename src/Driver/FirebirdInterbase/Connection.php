@@ -6,7 +6,7 @@ use Doctrine\DBAL\Driver\PDOConnection;
 class Connection extends PDOConnection
 {
     /** @var int */
-    private $previousAutocommitValue;
+    private int $previousAutocommitValue;
 
     /**
      * {@inheritdoc}
@@ -14,7 +14,7 @@ class Connection extends PDOConnection
      * Apparently, pdo_firebird transactions fail unless we explicitly change PDO::ATTR_AUTOCOMMIT ourselves.
      * @see https://stackoverflow.com/a/41749323/25804
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         $this->previousAutocommitValue = $this->getAttribute(\PDO::ATTR_AUTOCOMMIT);
         $this->setAttribute(\PDO::ATTR_AUTOCOMMIT, 0);
@@ -27,7 +27,7 @@ class Connection extends PDOConnection
      * Apparently, pdo_firebird transactions fail unless we explicitly change PDO::ATTR_AUTOCOMMIT ourselves.
      * @see https://stackoverflow.com/a/41749323/25804
      */
-    public function commit()
+    public function commit(): bool
     {
         $result = parent::commit();
         $this->resetAutocommitValue();
@@ -40,14 +40,14 @@ class Connection extends PDOConnection
      * Apparently, pdo_firebird transactions fail unless we explicitly change PDO::ATTR_AUTOCOMMIT ourselves.
      * @see https://stackoverflow.com/a/41749323/25804
      */
-    public function rollBack()
+    public function rollBack(): bool
     {
         $result = parent::rollBack();
         $this->resetAutocommitValue();
         return $result;
     }
 
-    private function resetAutocommitValue()
+    private function resetAutocommitValue(): void
     {
         if(isset($this->previousAutocommitValue)) {
             $this->setAttribute(\PDO::ATTR_AUTOCOMMIT, $this->previousAutocommitValue);
